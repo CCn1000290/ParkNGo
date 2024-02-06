@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "141184039250",
+    "project_id": "parkgo-a497d",
+    "storage_bucket": "parkgo-a497d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:141184039250:android:9eed487f6dd89c524fa28b",
+        "android_client_info": {
+          "package_name": "com.example.myapplication"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDgrhBqNRrNzB0JcANT4mRi-5SGkzFSfeM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
