@@ -2,69 +2,58 @@ package com.example.myapplication;
 
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
-import android.widget.EditText;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class Firebase extends AppCompatActivity {
-        private FirebaseAuth mAuth;
-        @Override
-        protected void onCreate(Bundle savedInstanceState) {
-            super.onCreate(savedInstanceState);
-            setContentView(R.layout.activity_main);
-            mAuth = FirebaseAuth.getInstance();
-        }
+    FirebaseFirestore db = FirebaseFirestore.getInstance();
+
     @Override
-    public void onStart() {
-        super.onStart();
-        // Check if user is signed in (non-null) and update UI accordingly.
-                FirebaseUser currentUser = mAuth.getCurrentUser();
-        if(currentUser != null){
-            //User is signed in use an intent to move to another activity
-        }
-    }
-    public void signup(String email, String password){
-        mAuth.createUserWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this, new
-                        OnCompleteListener<AuthResult>() {
-                            @Override
-                            public void onComplete(@NonNull Task<AuthResult>
-                                                           task) {
-                                if (task.isSuccessful()) {
-                                    Log.d("MainActivity",
-                                            "createUserWithEmail:success");
-                                    FirebaseUser user = mAuth.getCurrentUser();
-                                    Toast.makeText(Firebase.this,
-                                            "Authentication success. Use an intent to move to a new activity",
-                                            Toast.LENGTH_SHORT).show();
-                                    //user has been signed in, use an intent to move to the next activity
-                                } else {
-                                    // If sign in fails, display a message to the user.
-                                            Log.w("MainActivity",
-                                                    "createUserWithEmail:failure", task.getException());
-                                    Toast.makeText(Firebase.this,
-                                            "Authentication failed.",
-                                            Toast.LENGTH_SHORT).show();
-                                }
-                            }
-                            public void signupButtonClicked(View view){
-                                EditText email = findViewById(R.id.editTextTextEmailAddress);
-                                EditText password = findViewById(R.id.editTextTextPassword);
+    protected void onCreate(Bundle savedInstanceState) {
 
-                                String sEmail = email.getText().toString();
-                                String sPassword = password.getText().toString();
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        Map<String, Object> user = new HashMap<>();
+        user.put("First name", "Kieran");
+        user.put("Surname", "Woodward");
+        user.put("email", "Kieran.woodward@ntu.ac.uk");
 
-                                signup(sEmail, sPassword);
-                            }
-                        });
+        // Add a new document with a generated ID
+        db.collection("users")
+                .add(user)
+                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                    @Override
+                    public void onSuccess(DocumentReference documentReference) {
+                        Log.d("MainActivity", "DocumentSnapshot added with ID: " + documentReference.getId());
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w("MainActivity", "Error adding document", e);
+                    }
+                });
+        db.collection("users").document("User1")
+                .update("email", "Updated email")
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d("MainActivity", "DocumentSnapshot successfully updated!");
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w("MainActivity", "Error updating document", e);
+                    }
+                });
     }
 }

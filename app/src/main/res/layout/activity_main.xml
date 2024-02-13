@@ -13,6 +13,7 @@
         android:layout_height="72dp"
         android:layout_marginTop="104dp"
         android:gravity="center"
+        android:onClick="signupButtonClicked"
         android:text="ParkNGo"
         android:textColor="#FFFFFF"
         android:textSize="40sp"
@@ -50,34 +51,19 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
-        android:id="@+id/button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:id="@+id/signupButton"
+        android:layout_width="163dp"
+        android:layout_height="79dp"
         android:backgroundTint="#00796B"
         android:onClick="signupButtonClicked"
         android:text="Sign up"
+        android:textSize = "26dp"
         android:textColor="#FFFFFF"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.492"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.855" />
-
-    <Button
-        android:id="@+id/SignButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:backgroundTint="#006400"
-        android:onClick="signupButtonClicked"
-        android:text="Sign In"
-        android:textColor="#FFFFFF"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.485"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.708" />
+        app:layout_constraintVertical_bias="0.723" />
 
     <EditText
         android:id="@+id/editTextTextPassword"
