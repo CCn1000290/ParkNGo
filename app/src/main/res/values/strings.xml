@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">My Application</string>
     <string name="title_activity_login">LoginActivity</string>
-    <string name="title_activity_sign_in1">SignIn1</string>
+    <string name="title_activity_sign_in">SignIn</string>
     <!-- Strings used for fragments for navigation -->
     <string name="next">Next</string>
     <string name="previous">Previous</string>
@@ -42,4 +42,12 @@
         libero vel nunc consequat, quis tincidunt nisl eleifend. Cras bibendum enim a justo luctus
         vestibulum. Fusce dictum libero quis erat maximus, vitae volutpat diam dignissim.
     </string>
+    <string name="title_activity_maps_api">MapsAPI</string>
+    <string name="title_activity_maps">MapsActivity</string>
+    <string name="title_activity_maps2">MapsActivity2</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="session">Session</string>
+    <string name="map">Map</string>
+    <string name="settings">Settings</string>
 </resources>

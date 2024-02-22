@@ -1,5 +1,6 @@
 package com.example.myapplication;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -21,10 +22,9 @@ public class SignIn extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_sign_in);
         mAuth = FirebaseAuth.getInstance();
     }
-
     @Override
     public void onStart() {
         super.onStart();
@@ -35,17 +35,17 @@ public class SignIn extends AppCompatActivity {
         }
     }
 
-    public void signInButtonClicked(View view) {
+    public void signInButtonClicked1(View view) {
         EditText email = findViewById(R.id.editTextTextEmailAddress);
         EditText password = findViewById(R.id.editTextTextPassword);
 
         String sEmail = email.getText().toString();
         String sPassword = password.getText().toString();
 
-        signIn(sEmail, sPassword);
+        signIn1(sEmail, sPassword);
     }
 
-    public void signIn(String email, String password) {
+    public void signIn1(String email, String password) {
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
@@ -57,7 +57,9 @@ public class SignIn extends AppCompatActivity {
                             Toast.makeText(SignIn.this,
                                     "Authentication success. Use an intent to move to a new activity",
                                     Toast.LENGTH_SHORT).show();
-                            //user has been signed in, use an intent to move to the next activity
+                            Intent intent = new Intent(SignIn.this, HomeActivity.class);
+                            startActivity(intent);
+                            finish();
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w("MainActivity",
