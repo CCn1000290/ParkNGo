@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <SwitchPreferenceCompat
+        android:key="notifications"
+        android:title="Enable Notifications"
+        android:summary="Receive notifications"
+        android:defaultValue="true" />
+
+    <SwitchPreferenceCompat
+        android:key="location_sharing"
+        android:title="Share location"
+        android:summary="Allow the app to access your location to offer location-based services."
+        android:defaultValue="false" />
+
+    <SwitchPreferenceCompat
+        android:key="two_factor_auth"
+        android:title="Enable two-factor authentication"
+        android:summary="Add an extra layer of security to your account by requiring a second form of verification."
+        android:defaultValue="false" />
+
+    <SwitchPreferenceCompat
+        android:key="dark_mode"
+        android:title="Enable dark mode"
+        android:summary="Reduce low light conditions by enabling dark mode."
+        android:defaultValue="false" />
+
+    <SwitchPreferenceCompat
+        android:key="feedback"
+        android:title="Send usage statistics"
+        android:summary="Help us improve by sending anonymous usage data."
+        android:defaultValue="true" />
+    <Preference
+        android:key="help_feedback"
+        android:title="Help &amp; Feedback"
+        android:summary="Having issues? Send us feedback or report problems."
+        android:icon="@drawable/baseline_help_outline_24"
+        android:fragment="com.example.myapplication.HelpFeedbackFragment" />
+
+    <PreferenceCategory android:title="More Settings">
+
+
+    </PreferenceCategory>
+
+</PreferenceScreen>

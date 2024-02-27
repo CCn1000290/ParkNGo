@@ -1,18 +1,25 @@
 package com.example.myapplication;
 
+import android.content.Intent;
 import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 
-import androidx.fragment.app.Fragment;
+import androidx.annotation.Nullable;
+import androidx.preference.Preference;
+import androidx.preference.PreferenceFragmentCompat;
 
-public class SettingsFragment extends Fragment {
+public class SettingsFragment extends PreferenceFragmentCompat {
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_settings, container, false);
+    public void onCreatePreferences(@Nullable Bundle savedInstanceState, @Nullable String rootKey) {
+        setPreferencesFromResource(R.xml.pref_settings, rootKey);
+
+        Preference helpFeedbackPreference = findPreference("help_feedback");
+        if (helpFeedbackPreference != null) {
+            helpFeedbackPreference.setOnPreferenceClickListener(preference -> {
+                // start up a help and feedback fragment
+                startActivity(new Intent(getActivity(), HelpFeedbackFragment.class));
+                return true;
+            });
+        }
     }
 }

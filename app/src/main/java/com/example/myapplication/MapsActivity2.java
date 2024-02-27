@@ -20,9 +20,7 @@ public class MapsActivity2 extends FragmentActivity implements OnMapReadyCallbac
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        binding = ActivityMaps2Binding.inflate(getLayoutInflater());
-        setContentView(binding.getRoot());
+        setContentView(R.layout.activity_maps2);
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -43,9 +41,9 @@ public class MapsActivity2 extends FragmentActivity implements OnMapReadyCallbac
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-        // Add a marker in Sydney and move the camera
+        // Add a marker in and move the camera
         LatLng latlng = new LatLng(52.901890, -1.176880);
-        mMap.addMarker(new MarkerOptions().position(latlng).title("I am Here"));
+        mMap.addMarker(new MarkerOptions().position(latlng).title("I'm Here"));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(latlng));
     }
 }
