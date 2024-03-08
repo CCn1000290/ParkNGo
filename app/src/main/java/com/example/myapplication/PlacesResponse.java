@@ -16,7 +16,13 @@ public class PlacesResponse {
 
     public static class Result {
         private String name;
+        private int capacity;
+        private double PricePerHr;
+        private String id;
         private Geometry geometry;
+
+
+
 
         // Getter and setter
         public String getName() {
@@ -33,6 +39,23 @@ public class PlacesResponse {
 
         public void setGeometry(Geometry geometry) {
             this.geometry = geometry;
+        }
+
+        public String getPlaceId() { return id;}
+
+        public int getCapacity() { return capacity;}
+
+
+        public void setCapacity(int capacity) {
+            this.capacity = capacity;
+        }
+
+        public double getPricePerHr() {
+            return PricePerHr;
+        }
+
+        public void setPricePerHr(double pricePerHr) {
+            PricePerHr = pricePerHr;
         }
     }
 
@@ -69,5 +92,7 @@ public class PlacesResponse {
         public void setLng(double lng) {
             this.lng = lng;
         }
+
     }
+
 }

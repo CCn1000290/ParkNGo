@@ -4,24 +4,22 @@
         android:key="notifications"
         android:title="Enable Notifications"
         android:summary="Receive notifications"
+        android:icon="@drawable/baseline_notifications_24"
         android:defaultValue="true" />
 
     <SwitchPreferenceCompat
         android:key="location_sharing"
         android:title="Share location"
         android:summary="Allow the app to access your location to offer location-based services."
+        android:icon= "@drawable/baseline_my_location_24"
         android:defaultValue="false" />
 
-    <SwitchPreferenceCompat
-        android:key="two_factor_auth"
-        android:title="Enable two-factor authentication"
-        android:summary="Add an extra layer of security to your account by requiring a second form of verification."
-        android:defaultValue="false" />
 
     <SwitchPreferenceCompat
         android:key="dark_mode"
         android:title="Enable dark mode"
         android:summary="Reduce low light conditions by enabling dark mode."
+        android:icon="@drawable/baseline_dark_mode_24"
         android:defaultValue="false" />
 
     <SwitchPreferenceCompat
@@ -29,6 +27,12 @@
         android:title="Send usage statistics"
         android:summary="Help us improve by sending anonymous usage data."
         android:defaultValue="true" />
+
+    <Preference
+        android:key="logout"
+        android:title="Log Out"
+        android:summary="Log out of your account"
+        android:icon="@drawable/baseline_logout_24" />
     <Preference
         android:key="help_feedback"
         android:title="Help &amp; Feedback"
@@ -38,7 +42,7 @@
 
     <PreferenceCategory android:title="More Settings">
 
-
     </PreferenceCategory>
+
 
 </PreferenceScreen>

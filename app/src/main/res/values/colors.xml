@@ -1,2 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <color name="dark_gray">#424242</color>
+    <color name="black">#000000</color>
+    <color name="button_color_light">#00796B</color>
+    <color name="colorPrimary">#3DDC84</color>
+    <color name="colorPrimaryDark">#1A9A59</color>
+    <color name="colorSecondary">#D81B60</color>
+    <color name="colorSecondaryDark">#9A0036</color>
+    <color name="white">#FFFFFF</color>
+
+    <!-- Light mode background color -->
+    <color name="light_background">#3DDC84</color>
+    <!-- Dark mode background color -->
+    <color name="dark_background">#222222</color>
+    <!-- Dark mode text color -->
+    <color name="light_text">#FFFFFF</color>
+
+</resources>

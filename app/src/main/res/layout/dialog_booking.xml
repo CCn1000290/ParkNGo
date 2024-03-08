@@ -1,0 +1,34 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <TextView
+        android:id="@+id/tvParkingSpotName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Parking Spot Name"
+        android:textAppearance="?attr/textAppearanceListItem" />
+
+    <TextView
+        android:id="@+id/tvParkingSpotCapacity"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Capacity"
+        android:textAppearance="?attr/textAppearanceListItem" />
+
+    <TextView
+        android:id="@+id/tvParkingSpotPricePerHour"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Price Per Hour"
+        android:textAppearance="?attr/textAppearanceListItem" />
+
+    <EditText
+        android:id="@+id/etBookingDetails"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter booking details" />
+
+</LinearLayout>

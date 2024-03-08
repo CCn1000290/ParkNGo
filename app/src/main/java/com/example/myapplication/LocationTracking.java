@@ -3,7 +3,6 @@ package com.example.myapplication;
 import android.Manifest;
 import android.app.Service;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -11,69 +10,58 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.provider.Settings;
-import android.widget.Toast;
-
-import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
-
-/**
- * Code taken / adapted from: https://www.digitalocean.com/community/tutorials/android-location-api-tracking-gps
- */
 
 public class LocationTracking extends Service implements LocationListener {
 
     private final Context mContext;
-    boolean checkGPS = false;
-    boolean checkNetwork = false;
-    boolean canGetLocation = false;
+    private boolean canGetLocation = false;
     Location loc;
     double latitude;
     double longitude;
-
-    private static final long MIN_DISTANCE_CHANGE_FOR_UPDATES = 10;
-    private static final long MIN_TIME_BW_UPDATES = 1000 * 60 * 1;
     protected LocationManager locationManager;
 
-    public LocationTracking(Context mContext) {
-        this.mContext = mContext;
+    private static final long MIN_DISTANCE_CHANGE_FOR_UPDATES = 10; // Meters
+    private static final long MIN_TIME_BW_UPDATES = 1000 * 60; // 1 minute
+
+    public LocationTracking(Context context) {
+        this.mContext = context;
         getLocation();
     }
 
     private Location getLocation() {
         try {
-            locationManager = (LocationManager) mContext
-                    .getSystemService(LOCATION_SERVICE);
+            locationManager = (LocationManager) mContext.getSystemService(LOCATION_SERVICE);
+            boolean isGPSEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+            boolean isNetworkEnabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
 
-            // get GPS status
-            checkGPS = locationManager
-                    .isProviderEnabled(LocationManager.GPS_PROVIDER);
-
-            // get network provider status
-            checkNetwork = locationManager
-                    .isProviderEnabled(LocationManager.NETWORK_PROVIDER);
-
-            if (!checkGPS && !checkNetwork) {
-                Toast.makeText(mContext, "No Service Provider is available", Toast.LENGTH_SHORT).show();
+            if (!isGPSEnabled && !isNetworkEnabled) {
+                // no network provider is enabled
             } else {
                 this.canGetLocation = true;
-
-                // if GPS Enabled get lat/long using GPS Services
-                if (checkGPS) {
-
-                    if (ActivityCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-
+                if (isNetworkEnabled) {
+                    if (ActivityCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                            ActivityCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                        return null;
                     }
-                    locationManager.requestLocationUpdates(
-                            LocationManager.GPS_PROVIDER,
-                            MIN_TIME_BW_UPDATES,
-                            MIN_DISTANCE_CHANGE_FOR_UPDATES, this);
+                    locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, MIN_TIME_BW_UPDATES, MIN_DISTANCE_CHANGE_FOR_UPDATES, this);
                     if (locationManager != null) {
-                        loc = locationManager
-                                .getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                        loc = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
                         if (loc != null) {
                             latitude = loc.getLatitude();
                             longitude = loc.getLongitude();
+                        }
+                    }
+                }
+                if (isGPSEnabled) {
+                    if (loc == null) {
+                        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, MIN_TIME_BW_UPDATES, MIN_DISTANCE_CHANGE_FOR_UPDATES, this);
+                        if (locationManager != null) {
+                            loc = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                            if (loc != null) {
+                                latitude = loc.getLatitude();
+                                longitude = loc.getLongitude();
+                            }
                         }
                     }
                 }
@@ -84,11 +72,18 @@ public class LocationTracking extends Service implements LocationListener {
         return loc;
     }
 
-    public double getLongitude() {
-        if (loc != null) {
-            longitude = loc.getLongitude();
+    public boolean canGetLocation() {
+        return this.canGetLocation;
+    }
+
+    public void stopUsingGPS() {
+        if (locationManager != null) {
+            if (ActivityCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                    ActivityCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                return;
+            }
+            locationManager.removeUpdates(LocationTracking.this);
         }
-        return longitude;
     }
 
     public double getLatitude() {
@@ -97,38 +92,6 @@ public class LocationTracking extends Service implements LocationListener {
         }
         return latitude;
     }
-
-    public boolean canGetLocation() {
-        return this.canGetLocation;
-    }
-
-    public void showSettingsAlert() {
-        AlertDialog.Builder alertDialog = new AlertDialog.Builder(mContext);
-
-
-        alertDialog.setTitle("GPS is not Enabled!");
-
-        alertDialog.setMessage("Do you want to turn on GPS?");
-
-
-        alertDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                mContext.startActivity(intent);
-            }
-        });
-
-
-        alertDialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.cancel();
-            }
-        });
-
-
-        alertDialog.show();
-    }
-
 
     public void stopListener() {
         if (locationManager != null) {
@@ -139,29 +102,31 @@ public class LocationTracking extends Service implements LocationListener {
             locationManager.removeUpdates(LocationTracking.this);
         }
     }
+    public double getLongitude() {
+        if (loc != null) {
+            longitude = loc.getLongitude();
+        }
+        return longitude;
+    }
 
     @Override
-    public IBinder onBind(Intent intent) {
+    public IBinder onBind(Intent arg0) {
         return null;
     }
 
     @Override
     public void onLocationChanged(Location location) {
-
+        this.loc = location;
+        this.latitude = location.getLatitude();
+        this.longitude = location.getLongitude();
     }
 
     @Override
-    public void onStatusChanged(String s, int i, Bundle bundle) {
-
-    }
+    public void onProviderDisabled(String provider) {}
 
     @Override
-    public void onProviderEnabled(String s) {
-
-    }
+    public void onProviderEnabled(String provider) {}
 
     @Override
-    public void onProviderDisabled(String s) {
-
-    }
+    public void onStatusChanged(String provider, int status, Bundle extras) {}
 }

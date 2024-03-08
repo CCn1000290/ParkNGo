@@ -31,7 +31,8 @@ public class HomeActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_home);permissions.add(ACCESS_FINE_LOCATION);
+        setContentView(R.layout.activity_home);
+        permissions.add(ACCESS_FINE_LOCATION);
         permissions.add(ACCESS_COARSE_LOCATION);
         permissionsToRequest = findUnAskedPermissions(permissions);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -50,7 +51,7 @@ public class HomeActivity extends AppCompatActivity {
                     loadFragment(new SessionFragment(), false);
 
                 } else if (itemId == R.id.navigation_map) {
-                    loadFragment(new MapFragment(),false);
+                    loadFragment(new MapFragment(), false);
 
                 } else {
                     loadFragment(new SettingsFragment(), false);
@@ -69,7 +70,7 @@ public class HomeActivity extends AppCompatActivity {
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
-        if (isAppInitialized){
+        if (isAppInitialized) {
             fragmentTransaction.add(R.id.frame_layout, fragment);
         } else {
             fragmentTransaction.replace(R.id.frame_layout, fragment);
@@ -77,6 +78,7 @@ public class HomeActivity extends AppCompatActivity {
 
         fragmentTransaction.commit();
     }
+
     /**
      * Some code in this class has been taken from: https://www.digitalocean.com/community/tutorials/android-location-api-tracking-gps
      */
@@ -160,7 +162,9 @@ public class HomeActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
+        if (locationTrack != null) {
+            locationTrack.stopListener();
+        }
         super.onDestroy();
-        locationTrack.stopListener();
     }
 }

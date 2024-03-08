@@ -1,13 +1,16 @@
 package com.example.myapplication;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -19,12 +22,12 @@ import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.List;
@@ -39,7 +42,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     private GoogleMap mMap;
     private FusedLocationProviderClient fusedLocationClient;
     private LocationCallback locationCallback;
-    private static final int radius = 1000; // Search within a 1000-meter radius
+    private static final int radius = 2000; // Search within a 1000-meter radius
     private static final String type = "parking";
     private static final String apiKey = "AIzaSyAFoUtgLJeIuCudNc135gkVK-yEgRA0rZI";
     private GooglePlacesApiService service;
@@ -112,11 +115,13 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                     LatLng position = new LatLng(parkingLocation.getGeometry().getLocation().getLat(),
                             parkingLocation.getGeometry().getLocation().getLng());
 
-                    // Here you can specify the marker color, for example, using BitmapDescriptorFactory
-                    mMap.addMarker(new MarkerOptions()
+                    // specify the marker color
+                    Marker marker = mMap.addMarker(new MarkerOptions()
                             .position(position)
                             .title("Parking Spot")
-                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))); // HUE_AZURE for light blue color, change as needed
+                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
+                    marker.setTag(parkingLocation);
+
                 }
             }
 
@@ -149,13 +154,25 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED || ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             mMap.setMyLocationEnabled(true);
         }
+        mMap.getUiSettings().setZoomControlsEnabled(true);
+
+
+        // setting up the Retrofit call
         Call<PlacesResponse> call = service.getNearbyParking("location", radius, type, apiKey);
         call.enqueue(new Callback<PlacesResponse>() {
             @Override
             public void onResponse(Call<PlacesResponse> call, Response<PlacesResponse> response) {
                 if (response.isSuccessful()) {
                     PlacesResponse placesResponse = response.body();
-                    // TODO: Extract data from placesResponse and add markers
+                    mMap.clear(); // Clear existing markers if needed
+
+                    for (PlacesResponse.Result result : placesResponse.getResults()) {
+                        LatLng position = new LatLng(result.getGeometry().getLocation().getLat(), result.getGeometry().getLocation().getLng());
+                        mMap.addMarker(new MarkerOptions()
+                                .position(position)
+                                .title(result.getName())
+                                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
+                    }
                 }
             }
             @Override
@@ -163,6 +180,49 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                 // Handle failure
             }
         });
+
+        mMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
+            @Nullable
+            @Override
+            public View getInfoWindow(@NonNull Marker marker) {
+                return null;
+            }
+
+            @Nullable
+            @Override
+            public View getInfoContents(@NonNull Marker marker) {
+                if (marker.getTag() instanceof PlacesResponse.Result) {
+                    // Inflate custom layout
+                    View view = getLayoutInflater().inflate(R.layout.layout_info_window, null);
+                    TextView tvTitle = view.findViewById(R.id.tvTitle);
+                    TextView tvSnippet = view.findViewById(R.id.tvSnippet);
+
+                    PlacesResponse.Result parkingSpot = (PlacesResponse.Result) marker.getTag();
+                    tvTitle.setText(parkingSpot.getName());
+                    tvSnippet.setText("Click here for directions");
+
+                    return view;
+                }
+                return null;
+            }
+        });
+
+        mMap.setOnInfoWindowClickListener(marker -> {
+            if (marker.getTag() instanceof PlacesResponse.Result) {
+                PlacesResponse.Result parkingSpot = (PlacesResponse.Result) marker.getTag();
+                getDirectionsTo(parkingSpot);
+            }
+        });
+    }
+
+    private void getDirectionsTo(PlacesResponse.Result parkingSpot) {
+        LatLng destination = new LatLng(parkingSpot.getGeometry().getLocation().getLat(), parkingSpot.getGeometry().getLocation().getLng());
+        Uri gmmIntentUri = Uri.parse("google.navigation:q=" + destination.latitude + "," + destination.longitude);
+        Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+        mapIntent.setPackage("com.google.android.apps.maps");
+        if (mapIntent.resolveActivity(getActivity().getPackageManager()) != null) {
+            startActivity(mapIntent); // allow user to move to maps for directions
+        }
     }
 
 
@@ -177,14 +237,19 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         }
         fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, Looper.getMainLooper());
     }
+    private Marker currentLocationMarker;
 
     private void updateMapLocation(Location location) {
-        if (mMap != null && location != null) {
             LatLng currentLocation = new LatLng(location.getLatitude(), location.getLongitude());
-            mMap.clear(); // Clear the old markers
-            mMap.addMarker(new MarkerOptions().position(currentLocation).title("Current Location"));
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 15));
-        }
+            if (currentLocationMarker != null) {
+                currentLocationMarker.setPosition(currentLocation);
+            } else {
+                // Optionally, add a marker at the current location without moving the camera
+                currentLocationMarker = mMap.addMarker(new MarkerOptions()
+                        .position(currentLocation)
+                        .title("Current Location")
+                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
+            }
     }
 
     @Override
